@@ -40,7 +40,6 @@ WHERE NOT EXISTS (
     WHERE s.postal_code = n.d_codigo
       AND s.name = n.d_asenta
 );
-
 END;
 $$
 LANGUAGE plpgsql;

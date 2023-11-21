@@ -12,7 +12,7 @@ import subprocess
 
 subprocess.run(['python','descarga.py'])
 
-archivo_xls = Workbook('D:\Gob\Actualizacion cp\Sonora.xls')
+archivo_xls = Workbook('D:\Gob\Actualizacion cp\Sonora.xls')##Tu Path
 archivo_xls.save("Sonora.xlsx")
 jpype.shutdownJVM()
 os.remove('D:\Gob\Actualizacion cp\Sonora.xls')
@@ -37,7 +37,6 @@ workbook.save(filename)
 workbook.close()
 #Eliminacion de columnas
 excel_file = pd.read_excel(filename)
-excel_file.rename(columns={'D_mnpio': 'd_mnpio'}, inplace=True)
 excel_file.drop(columns=['d_CP', 'c_estado','c_oficina','c_CP','c_tipo_asenta','c_mnpio','id_asenta_cpcons','c_cve_ciudad'], inplace =True) 
 #Creacion Archivo limpio
 sheet_name = "Sonora"
@@ -50,8 +49,11 @@ if os.path.exists("registro.txt"):
     df1 = pd.read_excel(nombre)
     df2 = pd.read_excel(filename)
 
+    os.remove('cp_nuevos.xlsx')
     concat_df = pd.concat([df1, df2], axis=0, ignore_index=True)
     unique_df = concat_df.drop_duplicates(keep=False)
+    unique_df.rename(columns={'D_mnpio': 'd_mnpio'}, inplace=True)
+    unique_df.to_excel('cp_nuevos.xlsx', index=False)
     os.remove(nombre)
     engine = create_engine('postgresql://postgres:%40Hleyva21@localhost:5432/sac')
     unique_df.to_sql('nuevos', con=engine,schema='cat',if_exists='append', index=False,dtype={'d_codigo': sqlalchemy.types.VARCHAR(5), 'd_asenta': sqlalchemy.types.VARCHAR(250), 'd_zona': sqlalchemy.types.VARCHAR(250)})
