@@ -1,27 +1,27 @@
-CREATE OR REPLACE FUNCTION cat.new_cp()
-RETURNS void AS 
+CREATE OR REPLACE procedure  migrations.new_cp()
+AS 
 $$
 BEGIN
 
-	UPDATE cat.nuevos
+	UPDATE migrations.nuevos
 	SET d_tipo_asenta = cat.type_settlements.id::VARCHAR
 	FROM cat.type_settlements
-	WHERE UPPER(cat.nuevos.d_tipo_asenta) = cat.type_settlements.name;
+	WHERE UPPER(migrations.nuevos.d_tipo_asenta) = cat.type_settlements.name;
 
-	UPDATE cat.nuevos
+	UPDATE migrations.nuevos
 	SET d_mnpio = cat.municipalities.id::VARCHAR
 	FROM cat.municipalities
-	WHERE cat.nuevos.d_mnpio = cat.municipalities.name;
+	WHERE migrations.nuevos.d_mnpio = cat.municipalities.name;
 
-	UPDATE cat.nuevos
+	UPDATE migrations.nuevos
 	SET d_estado = cat.states.id::VARCHAR
 	FROM cat.states
-	WHERE cat.nuevos.d_estado = cat.states.name;
+	WHERE migrations.nuevos.d_estado = cat.states.name;
 
-	UPDATE cat.nuevos
+	UPDATE migrations.nuevos
 	SET d_ciudad = cat.localities.id::VARCHAR
 	FROM cat.localities
-	WHERE cat.nuevos.d_ciudad = cat.localities.name;
+	WHERE migrations.nuevos.d_ciudad = cat.localities.name;
 
 
 INSERT INTO cat.settlements (state_id, municipality_id, locality_id, type_settlement_id, postal_code, name, ambit) 
@@ -33,16 +33,22 @@ SELECT
     d_codigo,
     d_asenta,
     d_zona
-FROM cat.nuevos n
+FROM migrations.nuevos n
 WHERE NOT EXISTS (
     SELECT 1
     FROM cat.settlements s
     WHERE s.postal_code = n.d_codigo
-      AND s.name = n.d_asenta
+    AND s.name = n.d_asenta
 );
+
+truncate table migrations.nuevos;
+
 END;
 $$
 LANGUAGE plpgsql;
+
+
+
 
 
 
